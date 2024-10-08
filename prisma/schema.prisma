@@ -20,55 +20,110 @@ datasource db {
 //   title String @unique
 // }
 
+// model StatusType {
+//   id   Int    @id @default(autoincrement())
+//   type String @unique
+// }
+
+// model Status {
+//   id             Int         @id @default(autoincrement())
+//   status         String      @unique
+//   status_type_id Int
+//   Episode        Episode[]
+//   Character      Character[]
+// }
+
+// model Episode {
+//   id                            Int                             @id @default(autoincrement())
+//   title                         String                          @unique
+//   duration                      Int
+//   status                        Status                          @relation(fields: [status_id], references: [id])
+//   status_id                     Int
+//   CharacterEpisodeParticipation CharacterEpisodeParticipation[]
+// }
+
+// model Character {
+//   id                            Int                             @id @default(autoincrement())
+//   name                          String
+//   status                        Status                          @relation(fields: [status_id], references: [id])
+//   status_id                     Int
+//   CharacterEpisodeParticipation CharacterEpisodeParticipation[]
+// }
+
+// model Category {
+//   id            Int           @id @default(autoincrement())
+//   category_name String
+//   SubCategory   SubCategory[]
+// }
+
+// model SubCategory {
+//   id               Int      @id @default(autoincrement())
+//   subcategory_name String
+//   category_id      Int
+//   category         Category @relation(fields: [category_id], references: [id])
+// }
+
+// model CharacterEpisodeParticipation {
+//   id           Int       @id @default(autoincrement())
+//   character_id Int
+//   episode_id   Int
+//   start_time   DateTime
+//   end_time     DateTime
+//   character    Character @relation(fields: [character_id], references: [id])
+//   episode      Episode   @relation(fields: [episode_id], references: [id])
+// }
+
 model StatusType {
-  id   Int    @id @default(autoincrement())
-  type String @unique
+  id     Int      @id @default(autoincrement())
+  type   String   @unique
+  status Status[]
 }
 
 model Status {
-  id             Int         @id @default(autoincrement())
-  status         String      @unique
-  status_type_id Int
-  Episode        Episode[]
-  Character      Character[]
-}
-
-model Episode {
-  id                            Int                             @id @default(autoincrement())
-  title                         String                          @unique
-  duration                      Int
-  status                        Status                          @relation(fields: [status_id], references: [id])
-  status_id                     Int
-  CharacterEpisodeParticipation CharacterEpisodeParticipation[]
-}
-
-model Character {
-  id                            Int                             @id @default(autoincrement())
-  name                          String
-  status                        Status                          @relation(fields: [status_id], references: [id])
-  status_id                     Int
-  CharacterEpisodeParticipation CharacterEpisodeParticipation[]
+  id           Int         @id @default(autoincrement())
+  status       String
+  statusTypeId Int
+  statusType   StatusType  @relation(fields: [statusTypeId], references: [id])
+  characters   Character[]
+  episodes     Episode[]
 }
 
 model Category {
   id            Int           @id @default(autoincrement())
-  category_name String
-  SubCategory   SubCategory[]
+  categoryName  String        @unique
+  subcategories Subcategory[]
 }
 
-model SubCategory {
-  id               Int      @id @default(autoincrement())
-  subcategory_name String
-  category_id      Int
-  category         Category @relation(fields: [category_id], references: [id])
+model Subcategory {
+  id              Int      @id @default(autoincrement())
+  subcategoryName String
+  categoryId      Int
+  category        Category @relation(fields: [categoryId], references: [id])
+}
+
+model Character {
+  id             Int                             @id @default(autoincrement())
+  name           String
+  statusId       Int
+  status         Status                          @relation(fields: [statusId], references: [id])
+  participations CharacterEpisodeParticipation[]
+}
+
+model Episode {
+  id             Int                             @id @default(autoincrement())
+  title          String
+  statusId       Int
+  status         Status                          @relation(fields: [statusId], references: [id])
+  duration       Int // Máximo 60
+  participations CharacterEpisodeParticipation[]
 }
 
 model CharacterEpisodeParticipation {
-  id           Int       @id @default(autoincrement())
-  character_id Int
-  episode_id   Int
-  start_time   DateTime
-  end_time     DateTime
-  character    Character @relation(fields: [character_id], references: [id])
-  episode      Episode   @relation(fields: [episode_id], references: [id])
+  id          Int       @id @default(autoincrement())
+  characterId Int
+  episodeId   Int
+  startTime   DateTime // Formato 'HH:mm'
+  endTime     DateTime // Formato 'HH:mm'
+  character   Character @relation(fields: [characterId], references: [id])
+  episode     Episode   @relation(fields: [episodeId], references: [id])
 }
