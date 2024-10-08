@@ -5,7 +5,12 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { environments } from './environments';
+import { PrismaService } from './database/prisma.service';
+import { CharactersController } from './characters/controllers/characters.controller';
+import { CharactersModule } from './characters/characters.module';
 import config from './database/config';
+import { CharactersService } from './characters/services/characters.service';
+import { PrismaModule } from './database/prisma.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,8 +29,10 @@ import config from './database/config';
         POSTGRES_SCHEMA: Joi.string().required(),
       }),
     }),
+    CharactersModule,
+    PrismaModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, CharactersController],
+  providers: [AppService, PrismaService, CharactersService],
 })
 export class AppModule {}
